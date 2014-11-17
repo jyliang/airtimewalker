@@ -19,6 +19,8 @@
 		4F7C561B1A184E340077B74F /* NetworkManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F7C561A1A184E340077B74F /* NetworkManager.m */; };
 		4FADEE131A18531100E3D8DF /* RoomCheckOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FADEE121A18531100E3D8DF /* RoomCheckOperation.m */; };
 		4FADEE161A18531F00E3D8DF /* RoomExitOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FADEE151A18531F00E3D8DF /* RoomExitOperation.m */; };
+		4FE93B751A1A486200F99FD9 /* RoomStatusSubmitOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FE93B741A1A486200F99FD9 /* RoomStatusSubmitOperation.m */; };
+		4FE93B781A1A4EFB00F99FD9 /* WallCheckOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FE93B771A1A4EFB00F99FD9 /* WallCheckOperation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +59,13 @@
 		4FADEE121A18531100E3D8DF /* RoomCheckOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoomCheckOperation.m; sourceTree = "<group>"; };
 		4FADEE141A18531F00E3D8DF /* RoomExitOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoomExitOperation.h; sourceTree = "<group>"; };
 		4FADEE151A18531F00E3D8DF /* RoomExitOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoomExitOperation.m; sourceTree = "<group>"; };
+		4FE93B731A1A486200F99FD9 /* RoomStatusSubmitOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoomStatusSubmitOperation.h; sourceTree = "<group>"; };
+		4FE93B741A1A486200F99FD9 /* RoomStatusSubmitOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoomStatusSubmitOperation.m; sourceTree = "<group>"; };
+		4FE93B761A1A4EFB00F99FD9 /* WallCheckOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WallCheckOperation.h; sourceTree = "<group>"; };
+		4FE93B771A1A4EFB00F99FD9 /* WallCheckOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WallCheckOperation.m; sourceTree = "<group>"; };
+		9A7ED9B6B328214DBCC83CA9 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		D41D07B449C31F2D2304E463 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		F44F7FE7750CA2ECFCE9AC0F /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,12 +86,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0DB32B20FCE5924DDCDB2EAB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D41D07B449C31F2D2304E463 /* libPods.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		4F7C55E11A184CB20077B74F = {
 			isa = PBXGroup;
 			children = (
 				4F7C55EC1A184CB20077B74F /* walker */,
 				4F7C56061A184CB20077B74F /* walkerTests */,
 				4F7C55EB1A184CB20077B74F /* Products */,
+				B1B4D43231E99DDCDF75BA8D /* Pods */,
+				0DB32B20FCE5924DDCDB2EAB /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -118,6 +137,10 @@
 				4FADEE121A18531100E3D8DF /* RoomCheckOperation.m */,
 				4FADEE141A18531F00E3D8DF /* RoomExitOperation.h */,
 				4FADEE151A18531F00E3D8DF /* RoomExitOperation.m */,
+				4FE93B731A1A486200F99FD9 /* RoomStatusSubmitOperation.h */,
+				4FE93B741A1A486200F99FD9 /* RoomStatusSubmitOperation.m */,
+				4FE93B761A1A4EFB00F99FD9 /* WallCheckOperation.h */,
+				4FE93B771A1A4EFB00F99FD9 /* WallCheckOperation.m */,
 			);
 			path = walker;
 			sourceTree = "<group>";
@@ -146,6 +169,15 @@
 				4F7C56081A184CB20077B74F /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B1B4D43231E99DDCDF75BA8D /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				9A7ED9B6B328214DBCC83CA9 /* Pods.debug.xcconfig */,
+				F44F7FE7750CA2ECFCE9AC0F /* Pods.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -248,12 +280,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4FE93B781A1A4EFB00F99FD9 /* WallCheckOperation.m in Sources */,
 				4FADEE161A18531F00E3D8DF /* RoomExitOperation.m in Sources */,
 				4F7C56181A184D890077B74F /* Room.m in Sources */,
 				4F7C55F61A184CB20077B74F /* ViewController.m in Sources */,
 				4F7C56151A184D1E0077B74F /* RoomUtility.m in Sources */,
 				4F7C55F31A184CB20077B74F /* AppDelegate.m in Sources */,
 				4F7C561B1A184E340077B74F /* NetworkManager.m in Sources */,
+				4FE93B751A1A486200F99FD9 /* RoomStatusSubmitOperation.m in Sources */,
 				4FADEE131A18531100E3D8DF /* RoomCheckOperation.m in Sources */,
 				4F7C55F01A184CB20077B74F /* main.m in Sources */,
 			);
@@ -375,6 +409,7 @@
 		};
 		4F7C560E1A184CB20077B74F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9A7ED9B6B328214DBCC83CA9 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				GCC_PREFIX_HEADER = walker/PrefixHeader.pch;
@@ -386,6 +421,7 @@
 		};
 		4F7C560F1A184CB20077B74F /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F44F7FE7750CA2ECFCE9AC0F /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				GCC_PREFIX_HEADER = walker/PrefixHeader.pch;

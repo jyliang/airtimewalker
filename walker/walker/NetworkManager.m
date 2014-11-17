@@ -9,9 +9,11 @@
 #import "NetworkManager.h"
 #import "RoomCheckOperation.h"
 #import "RoomExitOperation.h"
+#import "RoomStatusSubmitOperation.h"
+#import "WallCheckOperation.h"
 #import "Room.h"
 
-@interface NetworkManager () <RoomCheckOperationDelegate, RoomExitOperationDelegate>
+@interface NetworkManager () <RoomCheckOperationDelegate, RoomExitOperationDelegate, RoomStatusSubmitOperationDelegate, WallCheckOperationDelegate>
 
 @property (nonatomic, strong) NSOperationQueue *roomWalkQueue; //queue for walking the rooms
 @property (nonatomic, strong) NSOperationQueue *roomCheckQueue; //queue for room wall check
@@ -40,38 +42,32 @@
     [self getRoomWithCompletion:^(id result, NSError *error) {
         if (result) {
             [self scheduleRoomCheck:result];
+        } else {
+            NSLog(@"Error : %@", [error localizedDescription]);
         }
     }];
 }
 
 - (void)getRoomWithCompletion:(ResultAndErrorHandler)handler {
     NSURLRequest *request = [RoomUtility getStartRoom];
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    operation.responseSerializer = [AFJSONResponseSerializer serializer];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if (responseObject) {
-            NSString *roomId = responseObject[@"roomId"];
-            if (roomId) {
-                handler(roomId, nil);
-                return;
+
+    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+        if (connectionError) {
+            handler(nil, connectionError);
+        } else {
+            NSError *jsonError;
+            NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&jsonError];
+            if (jsonError) {
+                handler(nil, jsonError);
+            } else {
+                NSString *roomId = json[@"roomId"];
+                if (roomId) {
+                    handler(roomId, nil);
+                    return;
+                }
             }
         }
-        NSError *error = [[NSError alloc] initWithDomain:@"walker" code:1 userInfo:@{NSLocalizedDescriptionKey:@"Can't find roomId"}];
-        handler(nil, error);
-
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        handler(nil, error);
     }];
-    /*
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:rq];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        self.downloadProgressBlock = nil;
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        DDLogError(@"Resource download error %@", error);
-        self.downloadProgressBlock = nil;
-    }];
-     */
-    [[NSOperationQueue mainQueue] addOperation:operation];
 }
 
 #pragma mark - RoomCheckOperationDelegate
@@ -117,16 +113,9 @@
 }
 
 - (void)scheduleWallCheck:(NSString *)roomId {
-    NSURLRequest *request = [RoomUtility getRoomWall:roomId];
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        Room *room = self.rooms[roomId];
-        room.order = [responseObject[@"order"] integerValue];
-        room.writing = responseObject[@"writting"];
-        NSLog(@"update room status %@", responseObject);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-
-    }];
+    WallCheckOperation *operation = [[WallCheckOperation alloc] init];
+    operation.roomId = roomId;
+    operation.delegate = self;
     [self.roomCheckQueue addOperation:operation];
 }
 
@@ -145,21 +134,18 @@
         }
     }
 
-    NSLog(@"WALK IS COMPLETE!!! %@", self.rooms);
-    NSURLRequest *request = [RoomUtility getReportRequest:[self getBrokenRooms] writing:[self getRoomWritingCheck]];
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"WOOT!");
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-
-    }];
-    NSArray *operations = self.roomCheckQueue.operations;
+    NSLog(@"WALK IS COMPLETE!!! %li rooms", self.rooms.count);
+    RoomStatusSubmitOperation *operation = [[RoomStatusSubmitOperation alloc] init];
+    operation.delegate = self;
+        NSArray *operations = self.roomCheckQueue.operations;
     for (NSOperation *exitingOperations in operations) {
         [operation addDependency:exitingOperations];
     }
     [self.roomCheckQueue addOperation:operation];
 
 }
+
+#pragma mark - RoomStatusSubmitOperationDelegate
 
 - (NSArray *)getBrokenRooms {
     NSArray *rooms = self.rooms.allValues;
@@ -183,10 +169,20 @@
 
     for (Room *room in sortedRooms) {
         if ([room isWorking]) {
-            [string appendString:room.writing];
+            if (room.writing) {
+                [string appendString:room.writing];
+            } else {
+                NSLog(@"room not ready %@", room);
+            }
         }
     }
     return string;
+}
+
+#pragma mark - WallCheckOperationDelegate
+
+- (Room *)getRoomWithId:(NSString *)roomId {
+    return self.rooms[roomId];
 }
 
 @end

@@ -37,7 +37,6 @@
         }
 
         __block BOOL isChecked = NO;
-        __block BOOL isChecking = NO;
         dispatch_sync(dispatch_get_main_queue(), ^{
             isChecked = [self.delegate isRoomChecked:self.roomId];
             if (isChecked) {
@@ -49,28 +48,39 @@
             return;
         }
 
+        NSLog(@"checking room %@", self.roomId);
+
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.delegate scheduleWallCheck:self.roomId];
         });
 
+
+
+        NSURLRequest *request = [RoomUtility getRoomExits:self.roomId];
+
+        NSURLResponse * response = nil;
+        NSError * error = nil;
+
+        NSData * data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+
+
+//        [self.queue addOperations:@[operation] waitUntilFinished:YES];
+//        [self.queue waitUntilAllOperationsAreFinished];
         __block NSArray *exits;
-
-        NSURLRequest *request = [RoomUtility getStartRoom];
-        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-            exits = responseObject;
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-
-        }];
-        [self.queue addOperations:@[operation] waitUntilFinished:YES];
+        if (data) {
+            NSError *jsonError;
+            NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&jsonError];
+            if (json) {
+                exits = json[@"exits"];
+            }
+        }
 
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (exits) {
+            if (exits && [exits isKindOfClass:[NSArray class]]) {
 
                 for (NSString *exit in exits) {
 
                     [self.delegate searchRoomExit:self.roomId exit:exit];
-
                 }
             }
             [self.delegate completeRoomCheck:self.roomId];

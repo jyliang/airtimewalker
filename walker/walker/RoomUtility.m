@@ -12,7 +12,9 @@ static NSString * const kHost = @"http://challenge2.airtime.com:7182";
 static NSString * const kPathRoomStart = @"/start";
 static NSString * const kPathRoomExits = @"/exits?roomId=%@";
 static NSString * const kPathRoomIdForExit = @"/move?roomId=%@&exit=%@";
-static NSString * const kPathRoomWall = @"GET /wall?roomId=%@";
+static NSString * const kPathRoomWall = @"/wall?roomId=%@";
+
+static NSString * const kReport = @"/report";
 
 static NSString * const kEmail = @"liangjyjason@gmail.com";
 static NSString * const kEmailHeaderKey = @"X-Labyrinth-Email";
@@ -48,8 +50,16 @@ static NSString * const kEmailHeaderKey = @"X-Labyrinth-Email";
 }
 
 + (NSURLRequest *)getReportRequest:(NSArray *)roomIds writing:(NSString *)writing {
-    NSString *urlString = [NSString stringWithFormat:kPathRoomWall, writing];
-    NSMutableURLRequest *request = [self getRequestWithPath:urlString];
+    NSMutableURLRequest *request = [self getRequestWithPath:kReport];
+    NSMutableDictionary *bodyDict = [NSMutableDictionary dictionary];
+    bodyDict[@"roomIds"] = roomIds;
+    bodyDict[@"challenge"] = writing;
+    NSError *jsonError;
+    NSData *data = [NSJSONSerialization dataWithJSONObject:bodyDict options:0 error:&jsonError];
+    [request setHTTPBody:data];
+    [request setHTTPMethod:@"POST"];
+    NSString* newStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(@"sending off report with body : %@", newStr);
     return request;
 }
 

@@ -18,6 +18,6 @@
 }
 
 - (BOOL)isWorking {
-    return YES;
+    return ![self.writing isEqualToString:@"xx"];
 }
 @end

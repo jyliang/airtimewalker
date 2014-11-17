@@ -10,7 +10,7 @@
 
 @protocol RoomExitOperationDelegate <NSObject>
 
-- (void)scheduleRoomCheckOperation:(NSString *)roomId;
+- (void)scheduleRoomCheck:(NSString *)roomId;
 - (void)completeExitCheck:(NSString *)roomdId exit:(NSString *)exit;
 
 @end

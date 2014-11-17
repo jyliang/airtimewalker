@@ -11,6 +11,8 @@
 
 @interface ViewController ()
 
+@property (nonatomic, strong) NetworkManager *networkMgr;
+
 @end
 
 @implementation ViewController
@@ -18,8 +20,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    NetworkManager *mgr = [[NetworkManager alloc] init];
-    [mgr start];
+    self.networkMgr = [[NetworkManager alloc] init];
+    [self.networkMgr start];
 }
 
 - (void)didReceiveMemoryWarning {

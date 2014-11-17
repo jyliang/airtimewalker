@@ -10,7 +10,7 @@
 
 @interface RoomExitOperation ()
 
-@property (nonatomic, strong) NSOperationQueue *queue;
+//@property (nonatomic, strong) NSOperationQueue *queue;
 
 @end
 
@@ -20,7 +20,7 @@
 {
     self = [super init];
     if (self) {
-        self.queue = [[NSOperationQueue alloc] init];
+//        self.queue = [[NSOperationQueue alloc] init];
     }
     return self;
 }
@@ -30,23 +30,34 @@
         if (self.isCancelled) {
             return;
         }
-        
-        NSURLRequest *request = [RoomUtility getStartRoom];
-        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
-        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-            NSString *roomId = responseObject[@"roomId"];
-            if (roomId) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.delegate scheduleRoomCheckOperation:roomId];
-                });
+
+        NSLog(@"checking room %@ exit %@", self.roomId, self.exit);
+
+        NSURLRequest *request = [RoomUtility getRoomIdForExit:self.roomId exit:self.exit];
+
+        NSURLResponse * response = nil;
+        NSError * error = nil;
+
+        NSData * data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+
+        if (!error) {
+            NSError *jsonError;
+            NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:&jsonError];
+            if (jsonError) {
+
+            } else {
+                NSString *roomId = json[@"roomId"];
+                if (roomId) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self.delegate completeExitCheck:self.roomId exit:self.exit];
+                        [self.delegate scheduleRoomCheck:roomId];
+                    });
+                }
             }
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        } else {
+            NSLog(@"Error : %@", [error localizedDescription]);
+        }
 
-        }];
-        [self.queue addOperations:@[operation] waitUntilFinished:YES];
-
-
-        
     }
 }
 
