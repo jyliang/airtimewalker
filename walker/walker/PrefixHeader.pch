@@ -1,0 +1,15 @@
+//
+//  PrefixHeader.pch
+//  walker
+//
+//  Created by Jason Liang on 11/16/14.
+//  Copyright (c) 2014 Jason Liang. All rights reserved.
+//
+
+#ifdef __OBJC__
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import "Constants.h"
+#import "AFNetworking.h"
+#import "RoomUtility.h"
+#endif
