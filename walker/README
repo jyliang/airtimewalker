@@ -1,0 +1,8 @@
+
+Design Highlights:
+
+1.After the initial room all the requests are populated into 2 queues:
+
+2.Room walk queue where after the exits are retrieved, the next set of rooms operations are put on the same queue. There is no dependency in this queue, only the need for synchronization on the UI thread for room status update. A few data structures are added to make sure we don’t run into circular references where the same room is checked more than once. A overall request list is used to determine when all the paths have been explored.
+
+3.Room wall check queue is a separate queue where at first all the status checks are added  to the queue and at the very end a special report operation is added with a dependency injection to make sure the report is done only after all the wall checks are completed.
